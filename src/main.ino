@@ -15,17 +15,26 @@ void setup()
 }
 void loop()
 {
-    light_up(); 
+    light_all(); 
+
+
+    //light(1, 1);
+    //light(7, 7);
 }
 
-void light_up() {
+void light(int col, int row) {
+
+    lc.setLed(0, col, row, true);
+    delay(25);
+}
+
+void light_all() {
 
     for (int row = 0; row < 8; row++)
     {
         for (int col = 0; col < 8; col++)
         {
-            lc.setLed(0, col, row, true); // turns on LED at col, row
-            delay(25);
+            light(col, row); 
         }
     }
 }
