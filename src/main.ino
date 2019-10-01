@@ -10,21 +10,28 @@ void setup()
 {
     // the zero refers to the MAX7219 number, it is zero for 1 chip
     lc.shutdown(0, false); // turn off power saving, enables display
-    lc.setIntensity(0, 8); // sets brightness (0~15 possible values)
+    lc.setIntensity(0, 1); // sets brightness (0~15 possible values)
     lc.clearDisplay(0);    // clear screen
 }
 void loop()
 {
-    light_all(); 
-
-
-    //light(1, 1);
-    //light(7, 7);
+    delay(1500); 
+    light_all();
+    delay(1500);
+    dark_all(); 
+    light(6, 2);
+    light(1, 2);
 }
 
 void light(int col, int row) {
 
     lc.setLed(0, col, row, true);
+    delay(25);
+}
+
+void dark(int col, int row) {
+
+    lc.setLed(0, col, row, false);
     delay(25);
 }
 
@@ -35,6 +42,18 @@ void light_all() {
         for (int col = 0; col < 8; col++)
         {
             light(col, row); 
+        }
+    }
+}
+
+void dark_all()
+{
+
+    for (int row = 0; row < 8; row++)
+    {
+        for (int col = 0; col < 8; col++)
+        {
+            dark(col, row); 
         }
     }
 }
