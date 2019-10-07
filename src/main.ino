@@ -7,6 +7,7 @@
 
 #include <MD_MAX72xx.h>
 #include <SPI.h>
+#include <./letters.ino>
 
 
 #define HARDWARE_TYPE MD_MAX72XX::PAROLA_HW
@@ -26,63 +27,6 @@ void setup()
     Serial.begin(9600);
 }
 
-int t[][5] = {
-    //horizontal part 
-    {4, 0},
-    {4, 1},
-    {4, 2},
-    {4, 3},
-    {4, 4},
-    //vertical part 
-    {0, 2},
-    {1, 2},
-    {2, 2},
-    {3, 2},
-};
-
-int e[][20] = {
-    //top
-    {4, 0},
-    {4, 1},
-    {4, 2},
-    {4, 3},
-    //middle
-    {2, 0},
-    {2, 1},
-    {2, 2},
-    {2, 3},
-    //bottom
-    {0, 0},
-    {0, 1},
-    {0, 2},
-    {0, 3},
-    //missing parts of "trunk"
-    {1, 3}, //Does not render on my display. TODO: check on someone elses
-    {3, 3}
-};
-
-int s[][10] = {
-    // bottom
-    {0, 0},
-    {0, 1},
-    {0, 2},
-    {0, 3},
-    // right trunk
-    {1, 0},
-    // middle
-    {2, 0},
-    {2, 1},
-    {2, 2},
-    {2, 3},
-    // left trunk
-    {3, 3},
-    // top
-    // middle
-    {4, 0},
-    {4, 1},
-    {4, 2},
-    {4, 3}};
-
 void log(int row, int col) 
 {
 
@@ -92,14 +36,30 @@ void log(int row, int col)
     Serial.println();
 }
 
+void writeLetter(int letter[][20]) {
+
+    for (int i = 0; i < 20; i++)
+    {
+
+        int row = letter[i][0];
+        int col = letter[i][1];
+        log(row, col);
+        mx.setPoint(row, col, true);
+    }
+}
+
+
 void loop()
 {
 
-    for(int i = 0; i < 20; i++) {
+    int word[] = {
+        t, e, s, t
+    };
+    
+    for(int i = 0; i < 4; i++){
 
-        int row = s[i][0];
-        int col = s[i][1];
-        log(row, col);
-        mx.setPoint(row, col, true); 
+        mx.clear();
+        delay(1000);
+        writeLetter(word[i]);
     }
 }
