@@ -46,58 +46,60 @@ int e[][20] = {
     {4, 1},
     {4, 2},
     {4, 3},
-    {4, 4},
-    {4, 5},
     //middle
     {2, 0},
     {2, 1},
     {2, 2},
     {2, 3},
-    {2, 4},
-    {2, 5},
     //bottom
     {0, 0},
     {0, 1},
     {0, 2},
     {0, 3},
-    {0, 4},
-    {0, 5},
     //missing parts of "trunk"
-    {1, 5},
-    {3, 5}
+    {1, 3}, //Does not render on my display. TODO: check on someone elses
+    {3, 3}
 };
 
+int s[][10] = {
+    // bottom
+    {0, 0},
+    {0, 1},
+    {0, 2},
+    {0, 3},
+    // right trunk
+    {1, 0},
+    // middle
+    {2, 0},
+    {2, 1},
+    {2, 2},
+    {2, 3},
+    // left trunk
+    {3, 3},
+    // top
+    // middle
+    {4, 0},
+    {4, 1},
+    {4, 2},
+    {4, 3}};
+
+void log(int row, int col) 
+{
+
+    Serial.print(row);
+    Serial.print("-");
+    Serial.print(col);
+    Serial.println();
+}
 
 void loop()
 {
 
     for(int i = 0; i < 20; i++) {
 
-        int row = e[i][0];
-        int col = e[i][1];
-        Serial.print(row);
-        Serial.print("-");
-        Serial.print(col);
-        Serial.println(); 
+        int row = s[i][0];
+        int col = s[i][1];
+        log(row, col);
         mx.setPoint(row, col, true); 
     }
-    /* //Letters, relative to an origin
-    //row, column
-    int t[1][6] = {
-        {3, 0},
-        {3, 1},
-        {3, 2},
-        {3, 3},
-        {3, 4},
-        {0, 2}
-    };  */
-    
-    /* mx.setPoint(4, 0, true);
-    mx.setPoint(4, 1, true);
-    mx.setPoint(4, 2, true);
-    mx.setPoint(4, 3, true);
-    mx.setPoint(4, 4, true);
-
-    mx.setPoint(2, 4, true);
-    mx.setPoint(2, 4, true); */
 }
