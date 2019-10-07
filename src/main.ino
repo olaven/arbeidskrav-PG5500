@@ -1,17 +1,9 @@
-#include <MD_MAX72xx.h>
+#include <./mx.ino>
 #include <./letters.ino>
 
-
-#define HARDWARE_TYPE MD_MAX72XX::PAROLA_HW
-#define MAX_DEVICES 12
-
-#define CLK_PIN 13  // or SCK
-#define DATA_PIN 11 // or MOSI
-#define CS_PIN 10   // or SS
-
-MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
-
-int loop_count = 0; 
+MD_MAX72XX mx = configuredMX();
+int loop_count = 0;
+const int letter_width = 4; 
 
 void log(int row, int col)
 {
@@ -36,8 +28,6 @@ void writeLetter(int origo, int letter[][20])
 }
 
 
-
-
 void setup()
 {
     mx.begin();
@@ -47,16 +37,19 @@ void setup()
 void loop()
 {
 
-    mx.clear();
-    loop_count++;
-
-    int origo = loop_count % 8; 
-    Serial.print("origo: ");
-    Serial.println(origo);
-    int word[] = {
-        t, e, s, t
-    };
     
-    writeLetter(origo, t);
-    delay(1000);
+    //int word[] = {t, e, s, t};
+
+    writeLetter(0, t);
+    /* loop_count++;
+    int origo = loop_count % 8;
+    for(int i = 0; i < word; i++) {
+    
+        //TODO: use origo
+        Serial.print("letter width: ");
+        Serial.println(letter_width);
+        writeLetter(i * letter_width, word[i]);
+    }  */
+
+    
 }
