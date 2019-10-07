@@ -1,4 +1,4 @@
-#ifndef ARBEIDSKRAV_CONFIGURE_MX
+/* #ifndef ARBEIDSKRAV_CONFIGURE_MX
 #define ARBEIDSKRAV_CONFIGURE_MX
 
 #include <MD_MAX72xx.h>
@@ -18,4 +18,4 @@ MD_MAX72XX configuredMX()
     return MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 }
 
-#endif
+#endif */
