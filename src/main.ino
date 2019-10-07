@@ -1,12 +1,4 @@
-// Use the MD_MAX72XX library to Print some text on the display
-//
-// Demonstrates the use of the library to print text.
-//
-// User can enter text on the serial monitor and this will display as a
-// message on the display.
-
 #include <MD_MAX72xx.h>
-#include <SPI.h>
 #include <./letters.ino>
 
 
@@ -19,15 +11,9 @@
 
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
+int loop_count = 0; 
 
-
-void setup()
-{
-    mx.begin();
-    Serial.begin(9600);
-}
-
-void log(int row, int col) 
+void log(int row, int col)
 {
 
     Serial.print(row);
@@ -36,30 +22,41 @@ void log(int row, int col)
     Serial.println();
 }
 
-void writeLetter(int letter[][20]) {
+void writeLetter(int origo, int letter[][20])
+{
 
     for (int i = 0; i < 20; i++)
     {
 
         int row = letter[i][0];
-        int col = letter[i][1];
-        log(row, col);
+        int col = origo + letter[i][1];
+        //log(row, col);
         mx.setPoint(row, col, true);
     }
 }
 
 
+
+
+void setup()
+{
+    mx.begin();
+    Serial.begin(9600);
+}
+
 void loop()
 {
 
+    mx.clear();
+    loop_count++;
+
+    int origo = loop_count % 8; 
+    Serial.print("origo: ");
+    Serial.println(origo);
     int word[] = {
         t, e, s, t
     };
     
-    for(int i = 0; i < 4; i++){
-
-        mx.clear();
-        delay(1000);
-        writeLetter(word[i]);
-    }
+    writeLetter(origo, t);
+    delay(1000);
 }
