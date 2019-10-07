@@ -1,7 +1,9 @@
+
 #include <./mx.ino>
 #include <./letters.ino>
 
 MD_MAX72XX mx = configuredMX();
+//LedControl lc = LedControl(11, 13, 10, 1);
 int loop_count = 0;
 const int letter_width = 4; 
 
@@ -28,6 +30,7 @@ void writeLetter(int origo, int letter[][20])
 }
 
 
+
 void setup()
 {
     mx.begin();
@@ -37,19 +40,16 @@ void setup()
 void loop()
 {
 
-    
-    //int word[] = {t, e, s, t};
-
-    writeLetter(0, t);
-    /* loop_count++;
+    mx.clear(); 
+    loop_count++;
+    int word[] = {t, e, s, t};
     int origo = loop_count % 8;
+    //int origo = calculate_origo(); 
+    
     for(int i = 0; i < word; i++) {
     
-        //TODO: use origo
-        Serial.print("letter width: ");
-        Serial.println(letter_width);
-        writeLetter(i * letter_width, word[i]);
-    }  */
-
-    
+        int adjustment = i * letter_width; 
+        int base = origo - adjustment; 
+        writeLetter(base, word[i]);
+    }
 }
