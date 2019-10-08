@@ -4,13 +4,10 @@ LedControl lc = LedControl(11, 13, 10, 1);
 unsigned long delaytime = 500;
 int beginning_position = 8; //NOTE: end of display + 1; 
 
-void setup()
-{
-    lc.shutdown(0, false);
-    lc.setIntensity(0, 8);
-    lc.clearDisplay(0);
-}
-
+/**
+ * Writes a single letter to the matrix, 
+ * with adjusted from 0th row. 
+ */
 void write_letter(byte letter[5], int adjustment)
 {
     for(int i = 0; i < 5; i++)
@@ -20,8 +17,13 @@ void write_letter(byte letter[5], int adjustment)
     }
 }
 
+/**
+ * Scrolls given byte array (letters)
+ * accross the matrix. 
+ */
 void scroll_word(byte * word[7]) 
 {
+
     for (int i = 0; i < 7; i++)
     {
         int adjustment = (i * 5) + beginning_position;
@@ -29,6 +31,21 @@ void scroll_word(byte * word[7])
     }
 }
 
+/**
+ * If entire word has been displayed, 
+ * the beginning is reset. Otherwize, 
+ * the word moves one step.  
+ */
+int adjusted_beginning(int current)
+{
+    int restart_point = -7 * 5;
+    if (current == restart_point)
+    {
+        return 8;
+    }
+
+    return --current;
+}
 
 void write_arduino_on_matrix()
 {
@@ -45,15 +62,11 @@ void write_arduino_on_matrix()
     scroll_word(arduino);
 }
 
-int adjusted_beginning(int current) 
+void setup()
 {
-    int restart_point = -7 * 5;
-    if (current == restart_point)
-    {
-        return 8; 
-    }
-    
-    return --current; 
+    lc.shutdown(0, false);
+    lc.setIntensity(0, 8);
+    lc.clearDisplay(0);
 }
 
 void loop()
