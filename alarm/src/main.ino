@@ -69,23 +69,23 @@ void setup(void)
     init_distance_sensor();
 }
 
-void draw_text(char *text, uint16_t color)
+void draw_text(String text, uint16_t color)
 {
     tft.setCursor(0, 0);
     tft.setTextColor(color);
     tft.setTextWrap(true);
-    tft.print(text);
+    tft.setTextSize(3); 
+    tft.print(text); 
+
+    Serial.print("Drew text: "); 
+    Serial.println(text); 
 }
 
-char *get_current_timestamp()
+void get_current_timestamp(char* buffer)
 {
-
     DateTime time = rtc.now();
     String as_string = time.toString("hh:mm:ss");
-    char time_buffer[25];
-    as_string.toCharArray(time_buffer, 25);
-
-    return time_buffer;
+    as_string.toCharArray(buffer, 25);
 }
 
 long get_current_distance()
@@ -108,13 +108,17 @@ void render_idle_screen()
     //TODO: render current time 
     tft.fillScreen(ST7735_GREEN);
 
-    char *timestamp = get_current_timestamp();
+    char *timestamp;
+    get_current_timestamp(timestamp); //TODO: not getting value in timestamp.
+    Serial.print("Going to draw: ");
+    Serial.println(timestamp);
     draw_text(timestamp, ST7735_BLACK);
 }
 
 void render_triggered_screen()
 {
-    //TODO: render triggered time 
+    //TODO: render triggered time   
+    draw_text(last_trigger_timestamp, ST7735_WHITE);
     tft.fillScreen(ST7735_BLUE); //renders as RED. Error in library?
     player.play(NOTE_C4);
 }
@@ -146,7 +150,7 @@ void loop()
         long difference = distance - previous_distance; 
         if (difference > 250 || difference < -250) {
 
-            last_trigger_timestamp = get_current_timestamp(); 
+            get_current_timestamp(last_trigger_timestamp); 
             alarm_triggered = true; 
         }
     }
