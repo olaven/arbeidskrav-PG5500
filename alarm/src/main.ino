@@ -1,11 +1,8 @@
-// Display dependencies: 
+// Display definitions: 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
-
-// Clock dependencies:
-#include "RTClib.h"
 
 #if defined(ESP32)
 #elif defined(ESP8266)
@@ -18,8 +15,18 @@
 #define TFT_DC 8
 #endif
 
+// Clock definitions:
+#include "RTClib.h"
+
+// Speaker definitions:
+#include "Tone.h"
+const int speaker_pin = 7; 
+
+
+
 RTC_DS1307 rtc;
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+Tone player; 
 
 
 void init_display() {
@@ -37,30 +44,34 @@ void init_clock() {
     }
 }
 
+void init_speaker() {
+
+    player.begin(speaker_pin);
+}
 void setup(void)
 {
     
     init_display(); 
     init_clock();
+    init_speaker(); 
 }
 
-void loop()
-{
+char* get_current_timestamp() {
 
     DateTime time = rtc.now();
     String as_string = time.toString("hh:mm:ss");
     char time_buffer[25];
-    as_string.toCharArray(time_buffer, 25); 
-    testdrawtext(time_buffer, ST77XX_WHITE);
+    as_string.toCharArray(time_buffer, 25);
 
-    //Full Timestamp
-    Serial.println(String("DateTime::TIMESTAMP_FULL:\t") + time.timestamp(DateTime::TIMESTAMP_FULL));
+    return time_buffer; 
+}
 
-    //Date Only
-    Serial.println(String("DateTime::TIMESTAMP_DATE:\t") + time.timestamp(DateTime::TIMESTAMP_DATE));
+void loop()
+{
+    char* timestamp = get_current_timestamp(); 
+    testdrawtext(timestamp, ST77XX_WHITE);
 
-    //Full Timestamp
-    Serial.println(String("DateTime::TIMESTAMP_TIME:\t") + time.timestamp(DateTime::TIMESTAMP_TIME));
+    player.play(NOTE_A3);
 
     delay(5000);
 }
