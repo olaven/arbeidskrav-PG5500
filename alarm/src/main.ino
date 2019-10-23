@@ -1,8 +1,11 @@
-
+// Display dependencies: 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
+
+// Clock dependencies:
+#include "RTClib.h"
 
 #if defined(ESP32)
 #elif defined(ESP8266)
@@ -15,41 +18,54 @@
 #define TFT_DC 8
 #endif
 
-
+RTC_DS1307 rtc;
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 
-float p = 3.1415926;
+void init_display() {
+
+    tft.initR(INITR_BLACKTAB); 
+    tft.fillScreen(ST77XX_BLACK);
+}
+
+void init_clock() {
+
+    rtc.begin();
+    if (!rtc.isrunning()) {
+        Serial.println("RTC is NOT running!");
+        rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    }
+}
 
 void setup(void)
 {
     
-    // Use this initializer if using a 1.8" TFT screen:
-    tft.initR(INITR_BLACKTAB); // Init ST7735S chip, black tab
-
-    uint16_t time = millis();
-    tft.fillScreen(ST77XX_BLACK);
-    time = millis() - time;
-
-
-    delay(500);
-
-    // large block of text
-
-    testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST77XX_WHITE);
+    init_display(); 
+    init_clock();
 }
 
 void loop()
 {
-    tft.invertDisplay(true);
-    delay(500);
-    tft.invertDisplay(false);
-    delay(500);
 
-    testdrawtext("hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, hei, ", ST77XX_GREEN);
+    DateTime time = rtc.now();
+    String as_string = time.toString("hh:mm:ss");
+    char time_buffer[25];
+    as_string.toCharArray(time_buffer, 25); 
+    testdrawtext(time_buffer, ST77XX_WHITE);
+
+    //Full Timestamp
+    Serial.println(String("DateTime::TIMESTAMP_FULL:\t") + time.timestamp(DateTime::TIMESTAMP_FULL));
+
+    //Date Only
+    Serial.println(String("DateTime::TIMESTAMP_DATE:\t") + time.timestamp(DateTime::TIMESTAMP_DATE));
+
+    //Full Timestamp
+    Serial.println(String("DateTime::TIMESTAMP_TIME:\t") + time.timestamp(DateTime::TIMESTAMP_TIME));
+
+    delay(5000);
 }
 
-void testdrawtext(char *text, uint16_t color)
+void testdrawtext(char* text, uint16_t color)
 {
     tft.setCursor(0, 0);
     tft.setTextColor(color);
