@@ -20,7 +20,8 @@ RTC_DS1307 rtc;
 const int speaker_pin = 7;
 Tone player;
 // Button definitions
-const int buttons[] = {1, 2, 3, 4};
+const int buttons[] = {A0, 2, 3, 4};
+const int code[] = {HIGH, HIGH, LOW, LOW};  
 // Distance sensor definitions
 const int trigger_pin = 5; 
 const int echo_pin = 6;    
@@ -104,7 +105,6 @@ long get_current_distance()
 
 void render_idle_screen()
 {
-
     //TODO: render current time 
     tft.fillScreen(ST7735_GREEN);
 
@@ -119,9 +119,24 @@ void render_triggered_screen()
     player.play(NOTE_C4);
 }
 
+boolean button_combinations_are_valid() {
+
+    for(int i = 0; i < 4; i++) {
+
+        const int pin = buttons[i]; 
+        const int expected = code[i]; 
+        const int actual = digitalRead(pin); 
+
+        if (expected != actual) {
+            return false; 
+        }
+    }
+
+    return true; 
+}
+
 void loop()
 {
-    
     long distance = get_current_distance();
     run_counter += 1; 
 
@@ -147,5 +162,11 @@ void loop()
     {
         render_idle_screen();
     }
-    //player.play(NOTE_A3);
+
+
+    if (button_combinations_are_valid()) 
+    {
+        alarm_triggered = false; 
+        player.stop(); 
+    }
 }
