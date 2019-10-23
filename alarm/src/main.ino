@@ -27,7 +27,6 @@ const int buttons[] = {1, 2, 3, 4};
 // Distance sensor definitions
 const int trigger_pin = 5; //Trig pin
 const int echo_pin = 6;    //Echo pin
-long Duration = 0;
 
 const bool alarm_triggered = false;
 const char *last_trigger_timestamp = "never triggered";
@@ -56,13 +55,21 @@ void init_speaker()
     player.begin(speaker_pin);
 }
 
+void init_distance_sensor()
+{
+
+    pinMode(trigger_pin, OUTPUT); // Trigger is an output pin
+    pinMode(echo_pin, INPUT);
+}
+
 void setup(void)
 {
 
-    Serial.begin(9600); 
+    Serial.begin(9600);
     init_display();
     init_clock();
     init_speaker();
+    init_distance_sensor();
 }
 
 void draw_text(char *text, uint16_t color)
@@ -87,41 +94,31 @@ char *get_current_timestamp()
     return time_buffer;
 }
 
-long Distance(long time)
+long get_current_distance()
 {
-    // Calculates the Distance in mm
-    // ((time)*(Speed of sound))/ toward a
-    
-    long DistanceCalc = ((time /2.9) / 2);     // Actual calculation in mm
-    return DistanceCalc;                       // return calculated value
-}
-
-long get_current_distance() {
 
     digitalWrite(trigger_pin, LOW);
     delayMicroseconds(2);
-    digitalWrite(trigger_pin, HIGH);        // Trigger pin to HIGH
-    delayMicroseconds(10);                 // 10us high
-    digitalWrite(trigger_pin, LOW);         // Trigger pin to HIGH
-    Duration = pulseIn(echo_pin, HIGH);     // Waits for the echo pin to get high & returns the Duration in microseconds
-    long Distance_mm = Distance(Duration); // Use function to calculate the distance
-    Serial.print("Distance = ");           // Output to serial
-    Serial.print(Distance_mm);
-    Serial.println(" mm");
-    delay(50);
+    digitalWrite(trigger_pin, HIGH);    
+    delayMicroseconds(10);              
+    digitalWrite(trigger_pin, LOW);     
 
-    return Distance_mm; 
+    long duration = pulseIn(echo_pin, HIGH);
+    long distance = ((duration / 2.9) / 2);
+
+    return distance;
 }
 
-void render_idle_screen() {
+void render_idle_screen()
+{
 
     tft.fillScreen(ST7735_GREEN);
 
     char *timestamp = get_current_timestamp();
-    draw_text(timestamp, ST7735_BLACK); 
+    draw_text(timestamp, ST7735_BLACK);
 }
 
-void render_triggered_screen() 
+void render_triggered_screen()
 {
 
     //TODO: Implement
@@ -131,8 +128,7 @@ void render_triggered_screen()
 void loop()
 {
 
-    long distance = get_current_distance(); 
-    Serial.print("Distance: "); 
+    long distance = get_current_distance();
     Serial.println(distance); 
 
     if (alarm_triggered)
