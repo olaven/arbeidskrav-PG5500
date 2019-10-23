@@ -22,7 +22,13 @@
 #include "Tone.h"
 const int speaker_pin = 7; 
 
-
+// Button definitions
+const int buttons[] = {
+    1,
+    2,
+    3,
+    4
+};
 
 RTC_DS1307 rtc;
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
@@ -66,14 +72,30 @@ char* get_current_timestamp() {
     return time_buffer; 
 }
 
+void play_buttons() {
+    
+    for (int i = 0; i < 4; i++)
+    {
+
+        int value = digitalRead(buttons[i]);
+        if (value == HIGH) {
+            
+            player.play(A3); 
+        } else {
+
+            player.stop(); 
+        }
+    }
+}
+
+//NOTE: avstandssensor på 6 og 5
 void loop()
 {
     char* timestamp = get_current_timestamp(); 
     testdrawtext(timestamp, ST77XX_WHITE);
 
-    player.play(NOTE_A3);
-
-    delay(5000);
+    play_buttons(); 
+    //player.play(NOTE_A3);
 }
 
 void testdrawtext(char* text, uint16_t color)
@@ -83,3 +105,4 @@ void testdrawtext(char* text, uint16_t color)
     tft.setTextWrap(true);
     tft.print(text);
 }
+ 
