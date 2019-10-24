@@ -73,24 +73,19 @@ void draw_text(String text, uint16_t text_color, uint16_t background_color)
 {
     tft.setCursor(0, 0);
     tft.setTextColor(text_color, background_color);
-    tft.setTextWrap(true);
     tft.setTextSize(1); 
-    tft.print(text); 
-
-    Serial.print("Drew text: "); 
-    Serial.println(text); 
+    tft.print("---- " + text + "----"); 
 }
 
 void get_current_timestamp(char** buffer)
 {
     DateTime time = rtc.now();
-    String as_string = time.toString("----- hh:mm:ss -----");
+    String as_string = time.timestamp(DateTime::TIMESTAMP_TIME);
     as_string.toCharArray(*buffer, 25);
 }
 
 long get_current_distance()
 {
-
     digitalWrite(trigger_pin, LOW);
     delayMicroseconds(2);
     digitalWrite(trigger_pin, HIGH);    
@@ -107,7 +102,6 @@ void render_idle_screen()
 {
     char *timestamp;
     get_current_timestamp(&timestamp);
-    Serial.println(timestamp);
     draw_text(timestamp, ST7735_BLACK, ST7735_GREEN);
 }
 
